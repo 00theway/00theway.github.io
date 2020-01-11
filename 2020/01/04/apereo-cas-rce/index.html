@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<!-- Head tag -->
+<head><meta name="generator" content="Hexo 3.9.0">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="google-site-verification" content="xBT4GhYoi5qRD5tr338pgPM5OWHHIDR6mNg1a3euekI">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content>
+    <meta name="keyword" content>
+    <link rel="shortcut icon" href="/img/ironman-avatar.jpg">
+    <!-- Place this tag in your head or just before your close body tag. -->
+    <script async defer src="https://buttons.github.io/buttons.js"></script>
+    <title>
+        
+          apereo cas rce - 00theway | blog | hacker | exp | exploit | security
+        
+    </title>
+
+    <link rel="canonical" href="https://www.00theway.org/2020/01/04/apereo-cas-rce/">
+
+    <!-- Bootstrap Core CSS -->
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    <!-- Custom CSS --> 
+    <link rel="stylesheet" href="/css/beantech.min.css">
+    
+    <!-- Pygments Highlight CSS -->
+    <link rel="stylesheet" href="/css/highlight.css">
+
+    <link rel="stylesheet" href="/css/widget.css">
+
+    <link rel="stylesheet" href="/css/rocket.css">
+
+    <link rel="stylesheet" href="/css/signature.css">
+
+    <link rel="stylesheet" href="/css/toc.css">
+
+    <!-- Custom Fonts -->
+    <!-- <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
+    <!-- Hux change font-awesome CDN to qiniu -->
+    <link href="https://cdn.staticfile.org/font-awesome/4.5.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+
+    <!-- Hux Delete, sad but pending in China
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/
+    css'>
+    -->
+
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+    <!-- ga & ba script hoook -->
+    <script></script>
+<link rel="alternate" href="/atom.xml" title="00theway's blog" type="application/atom+xml">
+</head>
+
+
+<!-- hack iOS CSS :active style -->
+<body ontouchstart="">
+	<!-- Modified by Yu-Hsuan Yen -->
+<!-- Post Header -->
+<style type="text/css">
+    header.intro-header{
+        
+            background-image: url('/img/header_img/article-bg.jpg')
+            /*post*/
+        
+    }
+    
+</style>
+
+<header class="intro-header" >
+    <!-- Signature -->
+    <div id="signature">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#rce" title="rce">rce</a>
+                            
+                              <a class="tag" href="/tags/#apereo cas" title="apereo cas">apereo cas</a>
+                            
+                              <a class="tag" href="/tags/#Java Deserialization" title="Java Deserialization">Java Deserialization</a>
+                            
+                        </div>
+                        <h1>apereo cas rce</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 00theway on
+                            2020-01-04
+                        </span>
+                    </div>
+                
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+	
+    <!-- Navigation -->
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">00theway&#39;s blog</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <!-- Known Issue, found by Hux:
+            <nav>'s height woule be hold on by its content.
+            so, when navbar scale out, the <nav> will cover tags.
+            also mask any touch event of tags, unfortunately.
+        -->
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">Home</a>
+                    </li>
+
+                    
+
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/about/">About</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/archive/">Archives</a>
+                        </li>
+                        
+                    
+
+                        
+                        <li>
+                            <a href="/tags/">tags</a>
+                        </li>
+                        
+                    
+                    
+                </ul>
+            </div>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container -->
+</nav>
+<script>
+    // Drop Bootstarp low-performance Navbar
+    // Use customize navbar with high-quality material design animation
+    // in high-perf jank-free CSS3 implementation
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        // CLOSE
+            $navbar.className = " ";
+            // wait until animation end.
+            setTimeout(function(){
+                // prevent frequently toggle
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        // OPEN
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+    <!-- Main Content -->
+    <!-- Modify by Yu-Hsuan Yen -->
+
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                <p><img src="banner.png" alt></p>
+<h1 id="背景介绍">背景介绍</h1>
+<p>Apereo CAS 是一个开源的企业级单点登录系统，很多统一认证系统都是机遇此系统二次开发，在一次攻防演练项目中CAS反序列化漏洞立下了汗马功劳，在网上能找到的相关描述仅限于官网的一个<a href="https://apereo.github.io/2016/04/08/commonsvulndisc/" target="_blank" rel="noopener">通告</a>，于是拿来研究分享一下。</p>
+<h1 id="漏洞环境">漏洞环境</h1>
+<p>直接使用docker运行了4.1.6的cas环境,将源代码拷贝出来以供分析。</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"># docker ps</span><br><span class="line">CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                                              NAMES</span><br><span class="line"><span class="number">91</span>ae98e6388d        apereo/cas:v4<span class="number">.1</span><span class="number">.6</span>   <span class="string">"/cas-overlay/bin/ru…"</span>   <span class="number">9</span> days ago          Up <span class="number">20</span> seconds       <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">32773</span>-&gt;<span class="number">8080</span>/tcp, <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span>:<span class="number">32772</span>-&gt;<span class="number">8443</span>/tcp</span><br><span class="line"># docker cp <span class="number">91</span>ae98e6388d:/cas-overlay ~/worksation/cas_4_1_6</span><br></pre></td></tr></table></figure>
+<h1 id="漏洞分析">漏洞分析</h1>
+<h3 id="1-cas如何处理请求">1. CAS如何处理请求</h3>
+<p>Apereo CAS 使用了spring webflow来处理登录、退出等请求，处理流程可以看一下这篇文章<a href="https://blog.csdn.net/joeljx/article/details/88812944" target="_blank" rel="noopener">CAS单点登录开源框架解读（三）–CAS单点登录服务端认证之loginFlowRegistry流程</a>。</p>
+<h3 id="2-漏洞触发流程">2. 漏洞触发流程</h3>
+<p>cas中关于登录的配置文件如下</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># /WEB-INF/cas-servlet.xml</span></span><br><span class="line">  &lt;bean <span class="attribute">id</span>=<span class="string">"loginHandlerAdapter"</span></span><br><span class="line">        <span class="attribute">class</span>=<span class="string">"org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter"</span></span><br><span class="line">        p:<span class="attribute">supportedFlowId</span>=<span class="string">"login"</span></span><br><span class="line">        p:<span class="attribute">flowExecutor-ref</span>=<span class="string">"loginFlowExecutor"</span></span><br><span class="line">        p:<span class="attribute">flowUrlHandler-ref</span>=<span class="string">"loginFlowUrlHandler"</span> /&gt;</span><br></pre></td></tr></table></figure>
+<p>当新的登录请求到达时，Spring会调用 “org.jasig.cas.web.flow.SelectiveFlowHandlerAdapter”类 的handle函数来处理请求，这个类的handle函数实现在他的父类里边，关键代码如下</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.springframework.webflow.mvc.servlet.FlowHandlerAdapter.class</span></span><br><span class="line"></span><br><span class="line">public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception &#123;</span><br><span class="line">        FlowHandler flowHandler = (FlowHandler)handler;</span><br><span class="line">        this.check<span class="constructor">AndPrepare(<span class="params">request</span>, <span class="params">response</span>, <span class="params">false</span>)</span>;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// flowExecutionKey是POST的“execution”的参数值，其中的flowUrlHandler在登录相关的配置文件中有配置“p:flowUrlHandler-ref="loginFlowUrlHandler"”</span></span><br><span class="line">        String flowExecutionKey = this.flowUrlHandler.get<span class="constructor">FlowExecutionKey(<span class="params">request</span>)</span>;</span><br><span class="line">        <span class="keyword">if</span> (flowExecutionKey != null) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                ServletExternalContext context = this.create<span class="constructor">ServletExternalContext(<span class="params">request</span>, <span class="params">response</span>)</span>;</span><br><span class="line">                </span><br><span class="line">                <span class="comment">//用来恢复execute中存储的当前状态，漏洞从这里开始，其中flowExecutor在登录相关的配置文件中可以找到</span></span><br><span class="line">                             <span class="comment">//p:flowExecutor-ref="loginFlowExecutor"，loginFlowExecutor对应的类为“org.springframework.webflow.executor.FlowExecutorImpl”</span></span><br><span class="line">                FlowExecutionResult result = this.flowExecutor.resume<span class="constructor">Execution(<span class="params">flowExecutionKey</span>, <span class="params">context</span>)</span>;</span><br><span class="line">                this.handle<span class="constructor">FlowExecutionResult(<span class="params">result</span>, <span class="params">context</span>, <span class="params">request</span>, <span class="params">response</span>, <span class="params">flowHandler</span>)</span>;</span><br><span class="line">				...</span><br></pre></td></tr></table></figure>
+<p>跟进看一下 &quot;this.flowExecutor.resumeExecution(flowExecutionKey, context);&quot;是如何恢复状态的</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.springframework.webflow.executor.FlowExecutorImpl.class</span></span><br><span class="line"></span><br><span class="line">public FlowExecutionResult resume<span class="constructor">Execution(String <span class="params">flowExecutionKey</span>, ExternalContext <span class="params">context</span>)</span> throws FlowException &#123;</span><br><span class="line">        FlowExecutionResult var6;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (logger.is<span class="constructor">DebugEnabled()</span>) &#123;</span><br><span class="line">                logger.debug(<span class="string">"Resuming flow execution with key '"</span> + flowExecutionKey);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="module-access"><span class="module"><span class="identifier">ExternalContextHolder</span>.</span></span>set<span class="constructor">ExternalContext(<span class="params">context</span>)</span>;</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 简单解析flowExecutionKey的数据到FlowExecutionKey对象，供后续使用</span></span><br><span class="line">            FlowExecutionKey key = this.executionRepository.parse<span class="constructor">FlowExecutionKey(<span class="params">flowExecutionKey</span>)</span>;</span><br><span class="line">            FlowExecutionLock lock = this.executionRepository.get<span class="constructor">Lock(<span class="params">key</span>)</span>;</span><br><span class="line">            lock.lock<span class="literal">()</span>;</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//通过FlowExecutionKey恢复状态，其中处理不当导致了反序列化漏洞</span></span><br><span class="line">                FlowExecution flowExecution = this.executionRepository.get<span class="constructor">FlowExecution(<span class="params">key</span>)</span>;</span><br><span class="line">                flowExecution.resume(context);</span><br><span class="line">    ...</span><br></pre></td></tr></table></figure>
+<p>继续跟进“this.executionRepository.getFlowExecution(key);”的处理流程</p>
+<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// org.jasig.spring.webflow.plugin.ClientFlowExecutionRepository.class</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> FlowExecution getFlowExecution(FlowExecutionKey <span class="built_in">key</span>) <span class="keyword">throws</span> FlowExecutionRepositoryException &#123;</span><br><span class="line">        <span class="keyword">if</span> (!(<span class="built_in">key</span> <span class="keyword">instanceof</span> ClientFlowExecutionKey)) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Expected instance of ClientFlowExecutionKey but got "</span> + <span class="built_in">key</span>.getClass().getName());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// 从上一步解析出的key对象中获取序列化相关的数据</span></span><br><span class="line">            <span class="built_in">byte</span>[] encoded = ((ClientFlowExecutionKey)<span class="built_in">key</span>).getData();</span><br><span class="line"></span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">//在this.transcoder.decode(encoded)代码解密中同时进行了反序列化恢复状态</span></span><br><span class="line">                ClientFlowExecutionRepository.SerializedFlowExecutionState state = (ClientFlowExecutionRepository.SerializedFlowExecutionState)<span class="keyword">this</span>.transcoder.decode(encoded);</span><br><span class="line">                ...</span><br></pre></td></tr></table></figure>
+<p>简单看一下解密相关的代码，漏洞触发点</p>
+<figure class="highlight haxe"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//org.jasig.spring.webflow.plugin.EncryptedTranscoder.class</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> Object decode(byte[] encoded) throws IOException &#123;</span><br><span class="line">        byte[] data;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            data = <span class="built_in">this</span>.cipherBean.decrypt(encoded);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception var11) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="type">IOException</span>(<span class="string">"Decryption error"</span>, var11);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        ByteArrayInputStream inBuffer = <span class="keyword">new</span> <span class="type">ByteArrayInputStream</span>(data);</span><br><span class="line">        ObjectInputStream <span class="keyword">in</span> = <span class="literal">null</span>;</span><br><span class="line"></span><br><span class="line">        Object var5;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="built_in">this</span>.compression) &#123;</span><br><span class="line">                <span class="keyword">in</span> = <span class="keyword">new</span> <span class="type">ObjectInputStream</span>(<span class="keyword">new</span> <span class="type">GZIPInputStream</span>(inBuffer));</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="keyword">in</span> = <span class="keyword">new</span> <span class="type">ObjectInputStream</span>(inBuffer);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 触发反序列化漏洞</span></span><br><span class="line">            var5 = <span class="keyword">in</span>.readObject();</span><br><span class="line">        ...</span><br></pre></td></tr></table></figure>
+<p>可以看到作者有意识的对序列化数据进行了加密，并使用配置的cipherBean进行解密</p>
+<p>看一下cipherBean的相关配置</p>
+<figure class="highlight dust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"loginFlowStateTranscoder"</span> <span class="attr">class</span>=<span class="string">"org.jasig.spring.webflow.plugin.EncryptedTranscoder"</span></span></span></span><br><span class="line"><span class="xml">          c:cipherBean-ref="loginFlowCipherBean" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"loginFlowCipherBean"</span> <span class="attr">class</span>=<span class="string">"org.cryptacular.bean.BufferedBlockCipherBean"</span></span></span></span><br><span class="line"><span class="xml">          p:keyAlias="$</span><span class="template-variable">&#123;cas.webflow.keyalias:aes128&#125;</span><span class="xml">"</span></span><br><span class="line"><span class="xml">          p:keyStore-ref="loginFlowCipherKeystore"</span></span><br><span class="line"><span class="xml">          p:keyPassword="$</span><span class="template-variable">&#123;cas.webflow.keypassword:changeit&#125;</span><span class="xml">"&gt;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"nonce"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.cryptacular.generator.sp80038a.RBGNonce"</span> /&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">"blockCipherSpec"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.cryptacular.spec.BufferedBlockCipherSpec"</span></span></span></span><br><span class="line"><span class="xml">                  c:algName="$</span><span class="template-variable">&#123;cas.webflow.cipher.alg:AES&#125;</span><span class="xml">"</span></span><br><span class="line"><span class="xml">                  c:cipherMode="$</span><span class="template-variable">&#123;cas.webflow.cipher.mode:CBC&#125;</span><span class="xml">"</span></span><br><span class="line"><span class="xml">                  c:cipherPadding="$</span><span class="template-variable">&#123;cas.webflow.cipher.padding:PKCS7&#125;</span><span class="xml">" /&gt;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">property</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"loginFlowCipherKeystore"</span> <span class="attr">class</span>=<span class="string">"java.security.KeyStore"</span></span></span></span><br><span class="line"><span class="xml">          factory-bean="loginFlowCipherKeystoreFactory" factory-method="newInstance" /&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="xml">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">"loginFlowCipherKeystoreFactory"</span> <span class="attr">class</span>=<span class="string">"org.cryptacular.bean.KeyStoreFactoryBean"</span></span></span></span><br><span class="line"><span class="xml">          c:type="$</span><span class="template-variable">&#123;cas.webflow.keystore.type:JCEKS&#125;</span><span class="xml">"</span></span><br><span class="line"><span class="xml">          c:password="$</span><span class="template-variable">&#123;cas.webflow.keystore.password:changeit&#125;</span><span class="xml">"&gt;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">"resource"</span>&gt;</span></span></span><br><span class="line"><span class="xml">            <span class="tag">&lt;<span class="name">bean</span> <span class="attr">class</span>=<span class="string">"org.cryptacular.io.URLResource"</span></span></span></span><br><span class="line"><span class="xml">                  c:url="$</span><span class="template-variable">&#123;cas.webflow.keystore:classpath:/etc/keystore.jceks&#125;</span><span class="xml">" /&gt;</span></span><br><span class="line"><span class="xml">        <span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span></span></span><br><span class="line"><span class="xml">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span></span><br></pre></td></tr></table></figure>
+<p>加解密相关的配置会先去配置文件中获取，没有配置相关信息的会使用默认的密钥信息（默认keystore配置位于spring-webflow-client-repo-1.0.0.jar包当中），由于cas默认配置文件中没有对密钥进行配置，导致我们可以用默认的密钥加密序列化数据进行攻击。</p>
+<p>分析漏洞之余去看了一下导致漏洞的spring-webflow-client-repo这个jar包的github主页<a href="https://github.com/serac/spring-webflow-client-repo" target="_blank" rel="noopener">spring-webflow-client-repo</a></p>
+<p>在主页中作者有对这个包存在安全风险做了相关提示</p>
+<p><img src="security.png" alt></p>
+<p>如果开发者在使用一个新的第三方包之前详细的去了解一下作者的介绍完全可以避免这个漏洞的存在。</p>
+<h1 id="漏洞利用">漏洞利用</h1>
+<p>对于反序列化漏洞单纯利用是比较简单的，这里不做过多介绍。这里重点介绍一下在web环境中有可以回显的exploit。</p>
+<p>关于web回显方法</p>
+<ol>
+<li><a href="https://xz.aliyun.com/t/2272" target="_blank" rel="noopener">报错回显</a></li>
+<li>获取response对象</li>
+</ol>
+<p>之前在调试&quot;Nexus Repository Manager 3&quot;的表达式执行漏洞时候发现&quot;Thread.currentThread()&quot;的“threadLocals”变量中会保存当前线程相关的一些资源，其中就可能存在response对象。</p>
+<p><img src="threadLocals.png" alt></p>
+<p>这种方法会相对麻烦，因为需要去遍历列表判断是否为目标对象。</p>
+<p>这里使用常见的通过静态方法获取response对象，对整个项目进行搜索发现了一个静态方法满足我们的需求</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">org</span><span class="selector-class">.springframework</span><span class="selector-class">.webflow</span><span class="selector-class">.context</span><span class="selector-class">.ExternalContextHolder</span><span class="selector-class">.getExternalContext</span>()</span><br></pre></td></tr></table></figure>
+<p>通过这个方法可以获取到当前进行关联的上下文信息，然后通过“getNativeRequest()”方法获取request对象通过getNativeResponse()<br>
+方法获取response对象。</p>
+<blockquote>
+<p>可以通过 “org.springframework.cglib.core.ReflectUtils.defineClass().newInstance();”这个public方法来加载我们的payload。</p>
+</blockquote>
+<h1 id="enter-hacking">Enter-hacking</h1>
+<blockquote>
+<p>自己动手，丰衣足食。</p>
+</blockquote>
+<p><img src="exploit.png" alt></p>
+
+                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2019/11/13/Shiro-RCE-again-Padding-Oracle-Attack/" data-toggle="tooltip" data-placement="top" title="Shiro RCE again (Padding Oracle Attack)">Next Post &rarr;</a>
+                        </li>
+                    
+                </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
+            </div>
+            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
+
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#背景介绍"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">背景介绍</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞环境"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">漏洞环境</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞分析"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">漏洞分析</span></a><ol class="toc-nav-child"><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#1-cas如何处理请求"><span class="toc-nav-number">3.0.1.</span> <span class="toc-nav-text">1. CAS如何处理请求</span></a></li><li class="toc-nav-item toc-nav-level-3"><a class="toc-nav-link" href="#2-漏洞触发流程"><span class="toc-nav-number">3.0.2.</span> <span class="toc-nav-text">2. 漏洞触发流程</span></a></li></ol></li></ol></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#漏洞利用"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">漏洞利用</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#enter-hacking"><span class="toc-nav-number">5.</span> <span class="toc-nav-text">Enter-hacking</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
+
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#rce" title="rce">rce</a>
+                        
+                          <a class="tag" href="/tags/#apereo cas" title="apereo cas">apereo cas</a>
+                        
+                          <a class="tag" href="/tags/#Java Deserialization" title="Java Deserialization">Java Deserialization</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://www.blackh4t.org/" target="_blank">DarkRay&#39;s BLog</a></li>
+                    
+                        <li><a href="https://www.iswin.org/" target="_blank">随风&#39;s blog</a></li>
+                    
+                        <li><a href="https://www.imbeee.com/" target="_blank">Beee’s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
+
+
+
+    <!-- Footer -->
+    <!-- Footer -->
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">
+                
+                    <li>
+                        <a href="/atom.xml">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+                    <li>
+                        <a target="_blank" href="https://twitter.com/00theway">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+                
+
+                
+
+                
+
+                
+                    <li>
+                        <a target="_blank"  href="https://github.com/00theway">
+                            <span class="fa-stack fa-lg">
+                                <i class="fa fa-circle fa-stack-2x"></i>
+                                <i class="fa fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+                
+
+                
+
+                </ul>
+                <p class="copyright text-muted">
+                    Copyright &copy; 00theway 2020 
+                    <br>
+                    Theme by <a href="http://huangxuan.me">Hux</a> 
+                    <span style="display: inline-block; margin: 0 5px;">
+                        <i class="fa fa-heart"></i>
+                    </span> 
+                    re-Ported by <a href="http://beantech.org">BeanTech</a> | 
+                    <iframe
+                        style="margin-left: 2px; margin-bottom:-5px;"
+                        frameborder="0" scrolling="0" width="91px" height="20px"
+                        src="https://ghbtns.com/github-btn.html?user=YenYuHsuan&repo=hexo-theme-beantech&type=star&count=true" >
+                    </iframe>
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<!-- jQuery -->
+<script src="/js/jquery.min.js"></script>
+
+<!-- Bootstrap Core JavaScript -->
+<script src="/js/bootstrap.min.js"></script>
+
+<!-- Custom Theme JavaScript -->
+<script src="/js/hux-blog.min.js"></script>
+
+
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+<!-- 
+     Because of the native support for backtick-style fenced code blocks 
+     right within the Markdown is landed in Github Pages, 
+     From V1.6, There is no need for Highlight.js, 
+     so Huxblog drops it officially.
+
+     - https://github.com/blog/2100-github-pages-now-faster-and-simpler-with-jekyll-3-0  
+     - https://help.github.com/articles/creating-and-highlighting-code-blocks/    
+-->
+<!--
+    <script>
+        async("http://cdn.bootcss.com/highlight.js/8.6/highlight.min.js", function(){
+            hljs.initHighlightingOnLoad();
+        })
+    </script>
+    <link href="http://cdn.bootcss.com/highlight.js/8.6/styles/github.min.css" rel="stylesheet">
+-->
+
+
+<!-- jquery.tagcloud.js -->
+<script>
+    // only load tagcloud.js in tag.html
+    if($('#tag_cloud').length !== 0){
+        async("https://www.00theway.org/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                //size: {start: 1, end: 1, unit: 'em'},
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+<!--fastClick.js -->
+<script>
+    async("https://cdn.bootcss.com/fastclick/1.0.6/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+<!-- Google Analytics -->
+
+
+
+
+<!-- Baidu Tongji -->
+
+
+
+
+
+
+	<a id="rocket" href="#top" class=""></a>
+	<script type="text/javascript" src="/js/totop.js?v=1.0.0" async=""></script>
+    <script type="text/javascript" src="/js/toc.js?v=1.0.0" async=""></script>
+<!-- Image to hack wechat -->
+<img src="https://www.00theway.org/img/icon_wechat.png" width="0" height="0" />
+<!-- Migrate from head to bottom, no longer block render and still work -->
+
+</body>
+
+</html>
