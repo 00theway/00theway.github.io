@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="https://www.00theway.org/"/>
-  <updated>2020-01-12T05:23:32.059Z</updated>
+  <updated>2020-01-18T11:02:19.876Z</updated>
   <id>https://www.00theway.org/</id>
   
   <author>
@@ -15,6 +15,37 @@
   </author>
   
   <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>通杀漏洞利用回显方法-linux平台</title>
+    <link href="https://www.00theway.org/2020/01/17/java-god-s-eye/"/>
+    <id>https://www.00theway.org/2020/01/17/java-god-s-eye/</id>
+    <published>2020-01-17T13:53:44.000Z</published>
+    <updated>2020-01-18T11:02:19.876Z</updated>
+    
+    <content type="html"><![CDATA[<p><img src="eye.png" alt></p><h1 id="现状">现状</h1><p>在漏洞利用中经常出现获取不到执行结果的情况，各路大牛也是研究了各种方法，目前能看到的大概有以下几种方式获取结果：</p><ol><li>报错回显</li><li>web中获取当前上下文对象（response、context、writer等）</li><li>可以出网情况下OOB</li></ol><p>在国内环境下大多数情况下都限制了对外的网络访问，获取执行结果变得难上加难，所以对新的方法进行研究，于是产生了本方法。</p><h1 id="新的回显思路">新的回显思路</h1><p>经过一段时间的研究发现了一种新的通杀的回显思路。在LINUX环境下，可以通过文件描述符&quot;/proc/self/fd/i&quot;获取到网络连接，在java中我们可以直接通过文件描述符获取到一个Stream对象，对当前网络连接进行读写操作，可以釜底抽薪在根源上解决回显问题。</p><p>核心思路的实现代码</p><figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;FileDescriptor&gt; c= <span class="module-access"><span class="module"><span class="identifier">FileDescriptor</span>.</span></span><span class="keyword">class</span>.get<span class="constructor">DeclaredConstructor(<span class="params">new</span> Class[]&#123;Integer.TYPE&#125;)</span>;</span><br><span class="line">c.set<span class="constructor">Accessible(<span class="params">true</span>)</span>;</span><br><span class="line">String ret = <span class="string">"00theway"</span>;</span><br><span class="line">FileOutputStream os = <span class="keyword">new</span> <span class="constructor">FileOutputStream(<span class="params">c</span>.<span class="params">newInstance</span>(<span class="params">new</span> Integer(4)</span>));</span><br><span class="line">os.write(ret.get<span class="constructor">Bytes()</span>);</span><br><span class="line">os.close<span class="literal">()</span>;</span><br></pre></td></tr></table></figure><p>在利用过程中会存在一个如何确定文件描述符id的情况，大家可以各显神通。</p><h1 id="思考">思考</h1><p>jvm所有的对象都存储在堆内存中，也许可以通过某种方法直接获取存储在堆内存中的socket对象实现回显，期待与各位师傅的沟通交流。</p><blockquote><p>在研究过程中学到一个新的知识点“/proc/thread-self/”，有兴趣的可以了解一下。</p></blockquote><h1 id="enter-hacking">Enter-hacking</h1><blockquote><p>自己动手，丰衣足食。</p><p>上一篇文章留下的彩蛋</p><p>利用此方法实现的一个shiro回显demo</p></blockquote><p><img src="shiro-show.png" alt></p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;p&gt;&lt;img src=&quot;eye.png&quot; alt&gt;&lt;/p&gt;
+&lt;h1 id=&quot;现状&quot;&gt;现状&lt;/h1&gt;
+&lt;p&gt;在漏洞利用中经常出现获取不到执行结果的情况，各路大牛也是研究了各种方法，目前能看到的大概有以下几种方式获取结果：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;报错回显&lt;/li&gt;
+&lt;li&gt;we
+      
+    
+    </summary>
+    
+    
+    
+      <category term="通杀" scheme="https://www.00theway.org/tags/%E9%80%9A%E6%9D%80/"/>
+    
+      <category term="漏洞回显" scheme="https://www.00theway.org/tags/%E6%BC%8F%E6%B4%9E%E5%9B%9E%E6%98%BE/"/>
+    
+  </entry>
   
   <entry>
     <title>Apereo CAS 反序列化漏洞分析及回显利用</title>
@@ -68,11 +99,11 @@
     
     
     
-      <category term="exploit" scheme="https://www.00theway.org/tags/exploit/"/>
-    
       <category term="shiro" scheme="https://www.00theway.org/tags/shiro/"/>
     
       <category term="rce" scheme="https://www.00theway.org/tags/rce/"/>
+    
+      <category term="exploit" scheme="https://www.00theway.org/tags/exploit/"/>
     
   </entry>
   
@@ -131,9 +162,9 @@
     
     
     
-      <category term="redis" scheme="https://www.00theway.org/tags/redis/"/>
-    
       <category term="exploit" scheme="https://www.00theway.org/tags/exploit/"/>
+    
+      <category term="redis" scheme="https://www.00theway.org/tags/redis/"/>
     
       <category term="unauthenticated" scheme="https://www.00theway.org/tags/unauthenticated/"/>
     

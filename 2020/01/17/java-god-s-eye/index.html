@@ -14,11 +14,11 @@
     <script async defer src="https://buttons.github.io/buttons.js"></script>
     <title>
         
-          00theway | blog | hacker | exp | exploit | security
+          通杀漏洞利用回显方法-linux平台 - 00theway | blog | hacker | exp | exploit | security
         
     </title>
 
-    <link rel="canonical" href="https://www.00theway.org/archives/2019/">
+    <link rel="canonical" href="https://www.00theway.org/2020/01/17/java-god-s-eye/">
 
     <!-- Bootstrap Core CSS -->
     <link rel="stylesheet" href="/css/bootstrap.min.css">
@@ -70,8 +70,8 @@
 <style type="text/css">
     header.intro-header{
         
-            background-image: url('/undefined')
-            /*page*/
+            background-image: url('/img/header_img/article-bg.jpg')
+            /*post*/
         
     }
     
@@ -84,10 +84,20 @@
             <div class="row">
                 <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
                 
-                    <div class="site-heading">
-                        <h1>00theway&#39;s blog</h1>
-                        <!--<hr class="small">-->
-                        <span class="subheading">OnTheWay</span>
+                    <div class="post-heading">
+                        <div class="tags">
+                            
+                              <a class="tag" href="/tags/#通杀" title="通杀">通杀</a>
+                            
+                              <a class="tag" href="/tags/#漏洞回显" title="漏洞回显">漏洞回显</a>
+                            
+                        </div>
+                        <h1>通杀漏洞利用回显方法-linux平台</h1>
+                        <h2 class="subheading"></h2>
+                        <span class="meta">
+                            Posted by 00theway on
+                            2020-01-17
+                        </span>
                     </div>
                 
 
@@ -190,324 +200,168 @@
 
 
     <!-- Main Content -->
-    <!-- Main Content -->
-<div class="container">
-    <div class="row">
-        
+    <!-- Modify by Yu-Hsuan Yen -->
 
-<!-- USE SIDEBAR -->
-    <!-- Post Container -->
+<!-- Post Content -->
+<article>
+    <div class="container">
+        <div class="row">
+
+            <!-- Post Container -->
             <div class="
-                col-lg-8 col-lg-offset-1
-                col-md-8 col-md-offset-1
-                col-sm-12
-                col-xs-12
-                post-container
-            ">
-            
-                
-<!-- Main Content -->
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
-            <!-- 归档列表 -->
-            
-            
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
 
-             <!-- 归档列表 -->
+                <p><img src="eye.png" alt></p>
+<h1 id="现状">现状</h1>
+<p>在漏洞利用中经常出现获取不到执行结果的情况，各路大牛也是研究了各种方法，目前能看到的大概有以下几种方式获取结果：</p>
+<ol>
+<li>报错回显</li>
+<li>web中获取当前上下文对象（response、context、writer等）</li>
+<li>可以出网情况下OOB</li>
+</ol>
+<p>在国内环境下大多数情况下都限制了对外的网络访问，获取执行结果变得难上加难，所以对新的方法进行研究，于是产生了本方法。</p>
+<h1 id="新的回显思路">新的回显思路</h1>
+<p>经过一段时间的研究发现了一种新的通杀的回显思路。在LINUX环境下，可以通过文件描述符&quot;/proc/self/fd/i&quot;获取到网络连接，在java中我们可以直接通过文件描述符获取到一个Stream对象，对当前网络连接进行读写操作，可以釜底抽薪在根源上解决回显问题。</p>
+<p>核心思路的实现代码</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Constructor&lt;FileDescriptor&gt; c= <span class="module-access"><span class="module"><span class="identifier">FileDescriptor</span>.</span></span><span class="keyword">class</span>.get<span class="constructor">DeclaredConstructor(<span class="params">new</span> Class[]&#123;Integer.TYPE&#125;)</span>;</span><br><span class="line">c.set<span class="constructor">Accessible(<span class="params">true</span>)</span>;</span><br><span class="line">String ret = <span class="string">"00theway"</span>;</span><br><span class="line">FileOutputStream os = <span class="keyword">new</span> <span class="constructor">FileOutputStream(<span class="params">c</span>.<span class="params">newInstance</span>(<span class="params">new</span> Integer(4)</span>));</span><br><span class="line">os.write(ret.get<span class="constructor">Bytes()</span>);</span><br><span class="line">os.close<span class="literal">()</span>;</span><br></pre></td></tr></table></figure>
+<p>在利用过程中会存在一个如何确定文件描述符id的情况，大家可以各显神通。</p>
+<h1 id="思考">思考</h1>
+<p>jvm所有的对象都存储在堆内存中，也许可以通过某种方法直接获取存储在堆内存中的socket对象实现回显，期待与各位师傅的沟通交流。</p>
+<blockquote>
+<p>在研究过程中学到一个新的知识点“/proc/thread-self/”，有兴趣的可以了解一下。</p>
+</blockquote>
+<h1 id="enter-hacking">Enter-hacking</h1>
+<blockquote>
+<p>自己动手，丰衣足食。</p>
+<p>上一篇文章留下的彩蛋</p>
+<p>利用此方法实现的一个shiro回显demo</p>
+</blockquote>
+<p><img src="shiro-show.png" alt></p>
 
-            
-            <div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2020">
-                    <span class="tag-text">2020</span>
-                </span>
-                <ul>
                 
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    01-17
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/01/17/java-god-s-eye/" style="color: #0085a1">
-                        <span>
-                            通杀漏洞利用回显方法-linux平台
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    01-04
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2020/01/04/apereo-cas-rce/" style="color: #0085a1">
-                        <span>
-                            Apereo CAS 反序列化漏洞分析及回显利用
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
+
+                <hr>
+                <!-- Pager -->
+                <ul class="pager">
+                    
+                    
+                        <li class="next">
+                            <a href="/2020/01/04/apereo-cas-rce/" data-toggle="tooltip" data-placement="top" title="Apereo CAS 反序列化漏洞分析及回显利用">Next Post &rarr;</a>
+                        </li>
+                    
                 </ul>
+
+                <!-- duoshuo Share start -->
+                
+                <!-- 多说 Share end-->
+
+                <!-- 多说评论框 start -->
+                
+                <!-- 多说评论框 end -->
+
+                <!-- disqus comment start -->
+                
+                <!-- disqus comment end -->
             </div>
             
-            <div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2019">
-                    <span class="tag-text">2019</span>
-                </span>
-                <ul>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    11-13
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2019/11/13/Shiro-RCE-again-Padding-Oracle-Attack/" style="color: #0085a1">
-                        <span>
-                            Shiro RCE again (Padding Oracle Attack)
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                </ul>
-            </div>
-            
-            <div class="one-tag-list">
-                <span class="fa fa-calendar-times-o listing-seperator" id="2017">
-                    <span class="tag-text">2017</span>
-                </span>
-                <ul>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    07-11
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2017/07/11/bash-reverse-shell/" style="color: #0085a1">
-                        <span>
-                            bash reverse shell
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                  <!-- <li class="listing-item">
-                  <time datetime="{{ post.date | date:"%Y-%m-%d" }}">{{ post.date | date:"%Y-%m-%d" }}</time>
-                  <a href="{{ post.url }}" title="{{ post.title }}">{{ post.title }}</a>
-                  </li> -->
-                 <li >
-                    03-27
-                    <i class="fa fa-angle-double-right" aria-hidden="true"></i>
-                    <a href="/2017/03/27/redis-unauthenticated-exploit/" style="color: #0085a1">
-                        <span>
-                            redis unauthenticated exploit
-                        </span>
-                    </a>
-                    <!-- <p class="post-meta">{{ post.date | date:"%Y-%m-%d" }}</p> -->
-                </li>
-                
-                </ul>
-            </div>
-            
+            <!-- Tabe of Content -->
+            <!-- Table of Contents -->
 
+    
+      <aside id="sidebar">
+        <div id="toc" class="toc-article">
+        <strong class="toc-title">Contents</strong>
+        
+          <ol class="toc-nav"><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#现状"><span class="toc-nav-number">1.</span> <span class="toc-nav-text">现状</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#新的回显思路"><span class="toc-nav-number">2.</span> <span class="toc-nav-text">新的回显思路</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#思考"><span class="toc-nav-number">3.</span> <span class="toc-nav-text">思考</span></a></li><li class="toc-nav-item toc-nav-level-1"><a class="toc-nav-link" href="#enter-hacking"><span class="toc-nav-number">4.</span> <span class="toc-nav-text">Enter-hacking</span></a></li></ol>
+        
+        </div>
+      </aside>
+    
 
+                
+            <!-- Sidebar Container -->
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                <!-- Featured Tags -->
+                
+                <section>
+                    <!-- no hr -->
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                       
+                          <a class="tag" href="/tags/#通杀" title="通杀">通杀</a>
+                        
+                          <a class="tag" href="/tags/#漏洞回显" title="漏洞回显">漏洞回显</a>
+                        
+                    </div>
+                </section>
+                
+
+                <!-- Friends Blog -->
+                
+                <hr>
+                <h5>FRIENDS</h5>
+                <ul class="list-inline">
+
+                    
+                        <li><a href="https://www.blackh4t.org/" target="_blank">DarkRay&#39;s BLog</a></li>
+                    
+                        <li><a href="https://www.iswin.org/" target="_blank">随风&#39;s blog</a></li>
+                    
+                        <li><a href="https://www.imbeee.com/" target="_blank">Beee’s Blog</a></li>
+                    
+                </ul>
+                
+            </div>
         </div>
     </div>
-</div>
+</article>
 
-                <!-- 如果开启评论功能 -->
-                
-            </div>
 
-          <!-- Sidebar Container -->
-<div class="
-    col-lg-3 col-lg-offset-0
-    col-md-3 col-md-offset-0
-    col-sm-12
-    col-xs-12
-    sidebar-container
-">
-    
-        <!-- Featured Tags -->
 
-<section>
-    <!-- no hr -->
-    <h5><a href="/tags/">FEATURED TAGS</a></h5>
-    <div class="tags">
-        
-        	
-            <a href="/tags/#shiro" title="shiro" rel="1">shiro</a>
-            
-        
-        	
-            <a href="/tags/#rce" title="rce" rel="1">rce</a>
-            
-        
-        	
-            <a href="/tags/#exploit" title="exploit" rel="2">exploit</a>
-            
-        
-        	
-            <a href="/tags/#通杀" title="通杀" rel="1">通杀</a>
-            
-        
-        	
-            <a href="/tags/#漏洞回显" title="漏洞回显" rel="1">漏洞回显</a>
-            
-        
-        	
-            <a href="/tags/#bash" title="bash" rel="1">bash</a>
-            
-        
-        	
-            <a href="/tags/#reverse shell" title="reverse shell" rel="1">reverse shell</a>
-            
-        
-        	
-            <a href="/tags/#apereo cas" title="apereo cas" rel="1">apereo cas</a>
-            
-        
-        	
-            <a href="/tags/#Java Deserialization" title="Java Deserialization" rel="1">Java Deserialization</a>
-            
-        
-        	
-            <a href="/tags/#回显" title="回显" rel="1">回显</a>
-            
-        
-        	
-            <a href="/tags/#redis" title="redis" rel="1">redis</a>
-            
-        
-        	
-            <a href="/tags/#unauthenticated" title="unauthenticated" rel="1">unauthenticated</a>
-            
-        
-    </div>
-</section>
 
-        <hr>
-    
-        <!-- Short About -->
-<section class="visible-md visible-lg">
-    <h5><a href="/about/">ABOUT ME</a></h5>
-    <div class="short-about">
 
-        
-            <img id = "avatar_pic" src="/img/ironman-avatar.jpg" />
-        
 
-        
-            <p>Hi, i&#39;m 00theway</p>
-        
 
-        <!-- SNS Link -->
-        <ul class="list-inline">
-            
-                <li>
-                    <a href="/atom.xml">
-                        <span class="fa-stack fa-lg">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-rss fa-stack-1x fa-inverse"></i>
-                        </span>
-                    </a>
-                </li>
-            
-            
-                <li>
-                    <a target="_blank" href="https://twitter.com/00theway">
-                        <span class="fa-stack fa-lg">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                        </span>
-                    </a>
-                </li>
-            
-            
+<!-- async load function -->
+<script>
+    function async(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+<!-- anchor-js, Doc:http://bryanbraun.github.io/anchorjs/ -->
+<script>
+    async("https://cdn.bootcss.com/anchor-js/1.1.1/anchor.min.js",function(){
+        anchors.options = {
+          visible: 'hover',
+          placement: 'left',
+          icon: 'ℬ'
+        };
+        anchors.add().remove('.intro-header h1').remove('.subheading').remove('.sidebar-container h5');
+    })
+</script>
+<style>
+    /* place left on bigger screen */
+    @media all and (min-width: 800px) {
+        .anchorjs-link{
+            position: absolute;
+            left: -0.75em;
+            font-size: 1.1em;
+            margin-top : -0.1em;
+        }
+    }
+</style>
 
-            
-
-            
-
-            
-                <li>
-                    <a target="_blank"  href="https://github.com/00theway">
-                        <span class="fa-stack fa-lg">
-                            <i class="fa fa-circle fa-stack-2x"></i>
-                            <i class="fa fa-github fa-stack-1x fa-inverse"></i>
-                        </span>
-                    </a>
-                </li>
-            
-            
-            
-            
-        </ul>
-    </div>
-</section>
-        <hr>
-    
-        
-  <h5>RECENT POSTS</h3>
-  <div class="widget">
-    <ul>
-      
-        <li>
-          <a href="/2020/01/17/java-god-s-eye/">通杀漏洞利用回显方法-linux平台</a>
-        </li>
-      
-        <li>
-          <a href="/2020/01/04/apereo-cas-rce/">Apereo CAS 反序列化漏洞分析及回显利用</a>
-        </li>
-      
-        <li>
-          <a href="/2019/11/13/Shiro-RCE-again-Padding-Oracle-Attack/">Shiro RCE again (Padding Oracle Attack)</a>
-        </li>
-      
-        <li>
-          <a href="/2017/07/11/bash-reverse-shell/">bash reverse shell</a>
-        </li>
-      
-        <li>
-          <a href="/2017/03/27/redis-unauthenticated-exploit/">redis unauthenticated exploit</a>
-        </li>
-      
-    </ul>
-  </div>
-
-        <hr>
-    
-        <!-- Friends Blog -->
-
-<h5>FRIENDS</h5>
-<ul class="list-inline">
-
-    
-        <li><a href="https://www.blackh4t.org/" target="_blank">DarkRay&#39;s BLog</a></li>
-    
-        <li><a href="https://www.iswin.org/" target="_blank">随风&#39;s blog</a></li>
-    
-        <li><a href="https://www.imbeee.com/" target="_blank">Beee’s Blog</a></li>
-    
-</ul>
-
-        <hr>
-    
-</div>
-
-        
-    </div>
-</div>
 
 
     <!-- Footer -->
